@@ -1,31 +1,50 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import ListGroup from "react-bootstrap/ListGroup";
-import Button from "react-bootstrap/Button";
-const axios = require("axios");
+import Container from "react-bootstrap/Container";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
+
+import axios from "axios";
 
 const List = () => {
-  const url = "http://localhost:8080/users";
-  const users = async () => {
+  const [data, setData] = useState([]);
+
+  const fetchData = async () => {
     try {
-      const response = await axios.get(url);
-      console.log(response);
-      return response;
+      const response = await axios.get("http://localhost:8080/users");
+      setData(response.data);
     } catch (error) {
       console.error(error);
     }
   };
 
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  console.log(data);
+
   return (
     <>
-      <ListGroup>
-        <Button variant="primary" type="submit" onClick={users}>
-          Get
-        </Button>
-        <ListGroup.Item disabled>Cras justo odio</ListGroup.Item>
-        <ListGroup.Item>Dapibus ac facilisis in</ListGroup.Item>
-        <ListGroup.Item>Morbi leo risus</ListGroup.Item>
-        <ListGroup.Item>Porta ac consectetur ac</ListGroup.Item>
-      </ListGroup>
+      <Container>
+        <Row>
+          <Col>
+            {data.map((user) => (
+              <ListGroup key={user.id} horizontal>
+                <Col>
+                  <ListGroup.Item>{user.firstName}</ListGroup.Item>
+                </Col>
+                <Col>
+                  <ListGroup.Item>{user.lastName}</ListGroup.Item>
+                </Col>
+                <Col>
+                  <ListGroup.Item>{user.email}</ListGroup.Item>
+                </Col>
+              </ListGroup>
+            ))}
+          </Col>
+        </Row>
+      </Container>
     </>
   );
 };
